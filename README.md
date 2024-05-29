@@ -64,3 +64,13 @@ Currently, two official plugins are available:
    10. and in that `ErrorBlock` instead of just hardcoding the `message`, use the `error` object & its `info` & its `message`
    11. output the `data` if we did successfully fetch the events
    12. in `App.js`, wrap the components that use React Query with `QueryClientProvider` & `QueryClient` imported from `@tanstack/react-query`
+
+## 2. Understanding & Configuring Query Behaviors - Cache & Stale Data
+
+1. you can control the behaviour of React Query, for example by setting a `staleTime` on your queries
+   - this controls after which time React Query will send the behind the scenes request to get updated data if it found data in your cache
+   - the default value is `0`, which means it will use `data` from the cache, but always send this behind the scenes request to get updated data
+   - if you set it to `5000`, it will wait for 5 seconds before sending another request
+2. you can also set the `gcTime` property
+   - this controls how long the `data` in the cache will be kept around
+   - the default value is 5 minutes
