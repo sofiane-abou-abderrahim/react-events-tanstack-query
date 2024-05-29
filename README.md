@@ -2,7 +2,18 @@
 
 ## Sending HTTP Requests With Ease
 
-- What Is Tanstack Query & Why Would You Use It?
+- What Is Tanstack Query?
+
+  1. A library that helps with sending HTTP requests
+  2. & helps with keeping your frontend UI in sync with your backend data
+
+- Why Would You Use It?
+
+  1. You don't need Tanstack Query, but
+  2. it can simplify your code (and your life as a developer)
+     1. it is able to get rid of a bunch of code like state management or some other code as well
+     2. it gives you some advanced features, like caching, behind the scenes data fetching, etc
+
 - Fetching & Mutating Data
 - Configuring Tanstack Query
 - Advanced Concepts: Cache Invalidation, Optimistic Updating & More
@@ -22,3 +33,34 @@ Currently, two official plugins are available:
 
 2. in your terminal, run `cd backend` & `npm install` & `npm start`
 1. open a new terminal & run `npm install` & `npm run dev`
+
+## 1. Installing & Using Tanstack Query - And Seeing Why It's Great!
+
+1. in the terminal, run `npm install @tanstack/react-query`
+2. in `src\components\Events\NewEventsSection.jsx`, use Tanstack Query:
+   1. cut the `fetchEvents()` function inside the `useEffect()` & paste it in a new file in `src/util/http.js`
+   2. export this function so that you can use it outside of that file with Tanstack Query
+   3. go back to `NewEventsSection.jsx` and get rid of the state management code & the useEffect() code
+   4. import the `{useQuery}` hook from `@tanstack/react-query`
+   5. use this `useQuery` hook inside the `NewEventsSection` component to send a HTTP request behind the scenes, etc
+   6. you must configure it by adding inside of it an object with:
+      1. first step:
+         1. a `queryFn` property which is a function that defines the actual code that will send the actual request because:
+            - Tanstack Query doesn't send HTTP requests, at least not on its own
+            - you have to write the code that sends the actual HTTP request
+            - Tanstack Query then manages the data, errors, caching & much more!
+         2. import the outsourced `fetchEvents()` & point at it as a value of the `queryFn` property
+      2. second step:
+         1. a `queryKey` property
+         2. as a value to it, set an array of values that are internally stored by React Query so that it can reuse existing data
+   7. you get an object back from `useQuery` from where you can pull out the elements you need, like:
+      1. the `data` property which holds the actual response data as a value, so the data that is returned by `fetchEvents()`
+      2. the `isPending` property
+      3. the `isError` property
+      4. the `error` property
+      5. & more
+   8. use now `isPending` instead of the old `isLoading` state to show the `LoadingIndicator` whilst you're waiting for a response
+   9. check for `isError` instead of the old `error` used with the state management to show the `ErrorBlock`
+   10. and in that `ErrorBlock` instead of just hardcoding the `message`, use the `error` object & its `info` & its `message`
+   11. output the `data` if we did successfully fetch the events
+   12. in `App.js`, wrap the components that use React Query with `QueryClientProvider` & `QueryClient` imported from `@tanstack/react-query`
