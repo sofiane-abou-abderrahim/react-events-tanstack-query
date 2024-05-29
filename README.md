@@ -74,3 +74,12 @@ Currently, two official plugins are available:
 2. you can also set the `gcTime` property
    - this controls how long the `data` in the cache will be kept around
    - the default value is 5 minutes
+
+## 3. Dynamic Query Functions & Query Keys
+
+1. in `src\components\Events\FindEventSection.jsx` import `{useQuery}` from `@tanstack/react-query`
+2. executes `useQuery()`
+3. in `http.js`, tweak a little bit the `fetchEvents()` function by adding a query parameter to the request
+4. go back to `FindEventSection.jsx` and configure the `useQuery` object & manage some state to update the query when the `searchTerm` changes
+5. get back the object from `useQuery()` & in there get back the `data`, `isPending`, `isError` & `error`
+6. use this pieces of information to dynamically & conditionally output the `content` in this component
