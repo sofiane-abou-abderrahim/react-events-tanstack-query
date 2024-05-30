@@ -108,3 +108,25 @@ Currently, two official plugins are available:
    1. so if if `searchTerm` is `undefined`, which is the initial value, the query will be disabled
    2. but, if it's anything else, including `''` (which would be the case if the user cleared the input field manually), the query will be enabled
 4. use `isLoading` instead of `isPending` to get rid of the initial loading spinner which displayed because when a query is disabled, React treats it as `isPending`
+
+## 6. Changing Data with Mutations
+
+1. in `NewEvent.jsx`, use `useQuery()`:
+   1. to send data
+   2. to collect that data
+2. the data is already collected in `EventForm.jsx`
+3. to send the data, in `NewEvent.jsx`, use the `useMutation` hook which:
+   1. is optimized for such data changing queries
+   2. for example, by making sure that those requests are not sent instantly when the component renders unlike `useQuery`
+   3. but, that instead requests are only sent when you want to send them, for example, from inside the `handleSubmit` function
+4. use `useMutation()` & configure its object:
+   1. set a `mutationFn` function
+   2. for that, add a new `createNewEvent` function in `http.js`
+   3. set this function as a value for the `mutationFn` property
+5. `useMutation` returns an object that you can destructure to pull out some useful properties, like the:
+   1. `mutate` property which is a function that you can call anywhere in this component to send this request
+   2. `isPending` property
+   3. `isError` property
+   4. `error` property
+6. therefore, inside the `handleSumbit()` function, call `mutate()` & pass the `formData` to it as a value
+7. handle errors & show some loading text whilst the request is on its way with help of the returned `useMutation` object properties
