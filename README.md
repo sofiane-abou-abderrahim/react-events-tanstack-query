@@ -97,3 +97,14 @@ Currently, two official plugins are available:
 3. now, in `FindEventSection.jsx`, make sure you:
    1. pass an object to `fetchEvents()` & set a property named `searchTerm`
    2. forward that `signal` from `http.js` via a `signal` object to the anonymous function & set it as an argument of `fetchEvents()`
+
+## 5. Enabled & Disabled Queries
+
+1. in `FindEventSection.jsx`, disable the query until a search term has been entered with help of the `enabled` property
+   1. initially, show no events
+   2. but, if a user searched something then clear the input, show all the events
+2. the `searchTerm` set should be initially undefined by not passing any value at all to `useState()`
+3. set `searchTerm !== undefined` as a value of `enabled`
+   1. so if if `searchTerm` is `undefined`, which is the initial value, the query will be disabled
+   2. but, if it's anything else, including `''` (which would be the case if the user cleared the input field manually), the query will be enabled
+4. use `isLoading` instead of `isPending` to get rid of the initial loading spinner which displayed because when a query is disabled, React treats it as `isPending`
