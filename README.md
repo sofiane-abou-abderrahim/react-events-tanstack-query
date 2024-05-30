@@ -83,3 +83,17 @@ Currently, two official plugins are available:
 4. go back to `FindEventSection.jsx` and configure the `useQuery` object & manage some state to update the query when the `searchTerm` changes
 5. get back the object from `useQuery()` & in there get back the `data`, `isPending`, `isError` & `error`
 6. use this pieces of information to dynamically & conditionally output the `content` in this component
+
+## 4. The Query Configuration Object & Aborting Requests
+
+1. React Query & the `useQuery()` hook passes some default data to the query function when assigned to `queryFn`
+   1. in `http.js`, `console.log(searchTerm)` to see that data
+   2. this is an object that gives information about:
+      - the `queryKey`
+      - a `signal` needed for aborting the request if you navigate away from the page before the request was finished
+2. therefore, in `http.js`, we should accept in `fetchEvents()` such an object and pull out for example
+   1. the `signal` then pass this `signal` to the `fetch()` function as a second argument
+   2. `searchTerm`
+3. now, in `FindEventSection.jsx`, make sure you:
+   1. pass an object to `fetchEvents()` & set a property named `searchTerm`
+   2. forward that `signal` from `http.js` via a `signal` object to the anonymous function & set it as an argument of `fetchEvents()`
