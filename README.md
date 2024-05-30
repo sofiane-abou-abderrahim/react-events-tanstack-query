@@ -130,3 +130,17 @@ Currently, two official plugins are available:
    4. `error` property
 6. therefore, inside the `handleSumbit()` function, call `mutate()` & pass the `formData` to it as a value
 7. handle errors & show some loading text whilst the request is on its way with help of the returned `useMutation` object properties
+
+## 7. Fetching More Data & Testing the Mutation
+
+1. in `NewEvent.jsx`, display a list of images in the `<EventForm>` component
+2. so, in `EventForm.jsx`, you need to fetch that list of images from the backend
+3. to do that, use `useQuery()` & configure it
+4. in `http.js`, add a new `fetchSelectableImages` function
+5. in `EventForm.jsx`, set this `fetchSelectableImages` function as a value for the `queryFn` property
+6. set a value of `['events-images']` for the `queryKey` property
+7. use that object returned by `useQuery()` to get hold `data`, `isPending` & `isError`
+8. set the `data` (so, that list of images) as a value for the `images` prop on the `<ImagePicker>` component
+9. show conditionally the list of images if we have `data`
+10. show a loading text if `isPending` is true
+11. show an the `<ErrorBlock>` component if `isError` is true
