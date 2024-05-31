@@ -161,3 +161,11 @@ Currently, two official plugins are available:
    7. now, in `NewEvent.jsx`, in the `onSuccess` method before navigating away, call `queryClient.invalidateQueries()`
    8. to target specific queries, `invalidateQueries()` takes an object as an input where you have to define the `queryKey` which you want to target
    9. set `queryKey: ['events']` to invalidate all queries that include the `events` key even if it is not exactly the same key (if you don't use `exact: true`)
+
+## 9. A Challenge! The Problem
+
+1. update the `util/http.js` file so that you add to it the `fetchEvent()` & `deleteEvent()` functions
+2. use the `fetchEvent()` function together with React Query's `useQuery()` hook to fetch the event details in `EventDetails.jsx` & output the event details, like the event title, the image
+   1. in order to fetch the data for a single event, you'll need the ID of that event
+   2. you can get that in the `EventDetails` component via React Router's `useParams` hook
+3. make the delete button work by using the `deleteEvent()` function together with React Query's `useMutation()` in `EventDetails.jsx` so that you get a mutation which you can execute when this button is clicked
