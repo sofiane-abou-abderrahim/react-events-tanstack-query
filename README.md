@@ -144,3 +144,20 @@ Currently, two official plugins are available:
 9. show conditionally the list of images if we have `data`
 10. show a loading text if `isPending` is true
 11. show an the `<ErrorBlock>` component if `isError` is true
+
+## 8. Acting on Mutation Success & Invalidating Queries
+
+1. in `NewEvent.jsx`, when creating a new event, wait for this mutation to be finished until navigating away
+   1. to do that, add a new `onSuccess` property to the `useQuery()` configuration object
+   2. it wants a function as a value that will be executed once this `mutationFn` succeeded
+   3. inside of this method, call `navigate('/events')`
+2. when creating a new event, the new event must be rendered straight away in the UI without switching to a different page then coming back to refetch data behind the scenes
+   1. React Query should immediately refetch data & update your data in the UI
+   2. in `NewEventsSection.jsx`, the `data` in the query should be marked as stale & refetch is triggered
+   3. you can achieve this by calling a method provided by React Query that allows us to invalidate one or more queries
+   4. before that, in `App.jsx`, with help of the `QueryClient` object, you will force this invalidation of a query
+   5. therefore, cut `QueryClient` & add it in `http.js` so that you can import it from multiple files
+   6. now, in `App.jsx`, import this `queryClient` constant from `http.js`
+   7. now, in `NewEvent.jsx`, in the `onSuccess` method before navigating away, call `queryClient.invalidateQueries()`
+   8. to target specific queries, `invalidateQueries()` takes an object as an input where you have to define the `queryKey` which you want to target
+   9. set `queryKey: ['events']` to invalidate all queries that include the `events` key even if it is not exactly the same key (if you don't use `exact: true`)
