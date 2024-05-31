@@ -194,3 +194,12 @@ Currently, two official plugins are available:
       3. invalidate your event related queries because
          1. the data should be marked as outdated after deletion of the event with `queryClient` & `invalidateQueries`
          2. and React Query should be forced to fetch data again
+
+## 11. Disabling Automatic Refetching After Invalidations
+
+1. in `EventDetails.jsx`, since we invalidate all queries, React Query immediately triggers a refetch for this details query & provokes an error in the console
+2. to avoid this behaviour, you must:
+   1. add a second `refetchType` property to this configuration object for `queryClient.invalidateQueries()`
+   2. and set its value to `'none'`
+   3. which makes sure that when you call `invalidateQueries()`, these existing queries (`queryKey: ['events]`) will not automatically be triggered again immediately
+   4. instead they will just be invalidated & the next time they will be required, they will run again
