@@ -169,3 +169,28 @@ Currently, two official plugins are available:
    1. in order to fetch the data for a single event, you'll need the ID of that event
    2. you can get that in the `EventDetails` component via React Router's `useParams` hook
 3. make the delete button work by using the `deleteEvent()` function together with React Query's `useMutation()` in `EventDetails.jsx` so that you get a mutation which you can execute when this button is clicked
+
+## 10. A Challenge! The Solution
+
+1. use React Query's `useQuery()` hook to fetch data:
+   1. in `EventDetails.jsx`, import `useQuery` & execute it in the `EventDetails` component function
+   2. configure the query by adding:
+      1. `queryFn` which has `fetchEvent()` as a value & get access to the `id` with `useParams()` & pass it to the function
+      2. `queryKey` which has `['events', params.id]` as a value
+   3. get the object from `useQuery()` & pull out from it `data`, `isPending`, `isError` & `error` properties
+   4. use this pieces of data to output different content on the screen depending on the current state of this query
+   5. formate the `date` in a nice way
+2. use ReactQuery's `useMutation()` hook to delete data:
+   1. in `EventDetails.jsx`, import `useMutation()` & execute it in the `EventDetails` component function
+   2. configure the query by adding `mutationFn` & setting `deleteEvent` to it as a value
+   3. get the object from `useMutation()` & pull out from it the `mutate` property
+   4. trigger the `mutate()` fonction when the `delete` button is pressed by callig it inside a `handleDelete()` function
+      1. pass an object to `mutate()`
+      2. add an `id` property which has the id of that to be deleted event (`params.id`) as a value
+   5. connect the `handleDelete()` function to this `delete` button with help of the `onClick` prop
+   6. define what should happen after the mutation succeeds
+      1. add the `onSuccess` property to the mutation configuration object
+      2. set to it an anonymous function & inside of it navigate away with the React Router DOM's `useNavigate()` hook
+      3. invalidate your event related queries because
+         1. the data should be marked as outdated after deletion of the event with `queryClient` & `invalidateQueries`
+         2. and React Query should be forced to fetch data again
