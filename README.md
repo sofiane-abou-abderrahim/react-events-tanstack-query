@@ -203,3 +203,28 @@ Currently, two official plugins are available:
    2. and set its value to `'none'`
    3. which makes sure that when you call `invalidateQueries()`, these existing queries (`queryKey: ['events]`) will not automatically be triggered again immediately
    4. instead they will just be invalidated & the next time they will be required, they will run again
+
+## 12. Enhancing the Demo App & Repeating Mutation Concepts
+
+1. in `EventDetails.jsx`, add a confirmation modal before we trigger this deletion mutation
+   1. manage some `isDeleting` state with the `useState()` hook initially set to `false` that tells us whether the user started the deletion process or not
+   2. change this to `true` once the user clicks this `Delete` button
+   3. open up a modal where the user has to click another button to start this deletion mutation
+   4. add a new `handleStartDelete()` function in which you set `setIsDeleting` to `true`
+   5. add a new `handleStopDelete()` function in which you set `setIsDeleting` to `true` (if the user cancels this delete process)
+   6. connect `handleStartDelete` to the `Delete` button in this UI instead of `handleDelete`
+   7. but, now this UI should also contain another component that can be displayed
+      1. in your `return` statement, add the `<Modal>` component
+      2. inside this component, show some confirmation text and `Cancel` & `Delete` buttons
+      3. this `Delete` button, when is clicked, should trigger the `handleDelete` function you used before to delete the event
+      4. this `Cancel` button should trigger the `handleStopDelete` function to stop the deletion mutation & close this modal again
+      5. because this modal should be display conditionally if `isDeleting` is `true`
+      6. this `<Modal>` component takes an `onClose` prop which triggers `handleStopDelete` when this modal is closed
+2. having to wait for a short while before the event is being deleted is not ideal because you should give the user some feedback that this deletion was initiated
+   1. in the `useMutation` object, pull out:
+      1. `isPending` property & set it to `isPendingDeletion` to avoid a name clash
+      2. `isError` & name it `isErrorDeleting`
+      3. `error` & name it `deleteError`
+   2. use these properties to show
+      1. some loading text whilst the request is on its way
+      2. and some error output if the deletion should fail
