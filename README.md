@@ -289,3 +289,20 @@ work on this update functionality so that you can update an event from the modal
    4. in that case, to be sure that you got the same data in your frontend as you have in your backend,
       1. you should use `queryClient.invalidateQueries(['events'], params.id)`
       2. to invalidate all the `events` queries that use this specific `params.id`
+
+## 16. Using the Query Key As Query Function Input
+
+It would be better if we would only see some events below "Recently added events" instead of all events
+
+1.  in the backend `app.js` file, the backend code supports already this feature thanks to the `max` query parameter inside the get `/events` route
+    1. so you must set such a `max` query parameter on that ongoing URL to limit the number of items you're retrieving & to get the most recent items
+    2. therefore, in the frontend `http.js`, you have to tweak this `fetchEvents()` function
+       1. pull out a `max` property
+       2. tweak the URL depending on whether `max` & `searchTerm` are set, or one of the two, or none of them
+2.  in `NewEventsSection.jsx`, tweak that query so that it doesn't fetch all events but instead just some events
+    1. set this `max` property in the `queryFn: fetchEvents` function & abort `signal`
+    2. update the `queryKey` by adding to it `{max: 3}` so you have a dedicated query key for this query (like you did in `FindEventSection.jsx` with the `searchTerm`)
+    3. but, you can also use an alternative approach to avoid repetition which is
+       1. passing `queryKey` as an argument to the `queryFn` anonymous function
+       2. and using the spread operator as an argument of `fetchEvents()` to spread the object `{max: 3}` from the `queryKey` property, like this `...queryKey[1]`
+3.  use this alternative approach in `FindEventSection.jsx` for the `searchTerm`
