@@ -239,3 +239,16 @@ Currently, two official plugins are available:
 6. use `isPending` to show a loading indicator (`LoadingIndicator`) if we're still waiting for a response
 7. use `isError` & `error` to show an error block (`<ErrorBlock>`) if we get an error
 8. use `data` to show the `<EventForm>`
+
+## 14. Updating Data with Mutations
+
+work on this update functionality so that you can update an event from the modal after clicking the `Edit` button
+
+1. update the `http.js` file which now includes an `updateEvent` function
+2. in `EditEvent.jsx`, you need a mutation to send a request to the backend that changes the event data
+   1. create a mutation with `useMutation()`
+   2. trigger it by calling the `mutate()` property & targetting the `updateEvent` function from inside the `handleSubmit()`
+   3. in `mutate()`, pass this object with the to be forwarded data to `updateEvent` to this `mutate()` function
+      1. an object that has `id` & `event` properties
+      2. hence pass `{id: params.id, event: formData}`
+   4. call `navigate()` right after `mutate()` inside `handleSubmit()`
