@@ -252,3 +252,40 @@ work on this update functionality so that you can update an event from the modal
       1. an object that has `id` & `event` properties
       2. hence pass `{id: params.id, event: formData}`
    4. call `navigate()` right after `mutate()` inside `handleSubmit()`
+
+## 15. Optimistic Updating
+
+- Do optimistic updating so that, when you press the `Update` button, the UI is updated instantly without waiting for the response of the backend
+- & if the update fails, roll back the optimistic update you performed
+
+1. in `EditEvent.jsx`, add a new `onMutate` property to this `useMutation()` configuration object
+   1. this property wants a function as a value which will be executed right when you call `mutate()`, so before this process is done & before you got back a response
+   2. in this function, update the data that is cached by React Query, this event data that is stored behind the scenes so to say
+      1. import `queryClient` from `http.js` to change the cached data (and not to invalidate queries this time)
+      2. inside the `onMutate` function, get the currently stored data so that we can manipulate it & edit it without waiting for a response with help of `queryClient.setQueryData()`
+         1. `setQueryData()` needs 2 arguments
+         2. the key of the query that you want to edit `['events', params.id]`
+         3. the new `data` you want to store under that query key, which is, in this case, that updated event data `formData` which you also sent to your backend that you can store in a `newEvent` constant
+      3. inside `onMutate()`, use `queryClient.cancelQueries()` to cancel all active queries for a specific key
+2. to make sure you can roll back your optimistic update if it fails on the backend
+   1. you also need to get the old data & store it somewhere so that you can roll back to that old data
+      1. do that before you update the data (`queryClient.setQueryData()`) with help of `queryClient.getQueryData()` which gives you the currently stored query data
+      2. store it in a `previousEvent` constant
+   2. roll back to `prevousEvent` if your update mutation failed by adding a new `onError` property to this`useMutation()` configuration object
+      1. this property wants a function which will be executed if this `mutationFn: updateEvent` function fails
+      2. it receives a couple of inputs that are passed in automatically by React Query
+         1. `error`, `data` & `context` objects
+         2. this `context` object can contain this `previousEvent`
+      3. in order for this `previousEvent` to be part of this `context`,
+         1. you should return an object in this `onMutate` function, because this object will be this `context`
+         2. and store this `previousEvent` inside of this object
+      4. on `onError`, call `queryClient.setQueryData()` again,
+         1. to again manually update the stored data for this query with this key `['events', params.id]`
+         2. but now, set it back to that old event `previousEvent` which was previously stored with `context.previousEvent`
+3. make sure that whenever this mutation finished you still fetch the latest data from the backend and the data are always into sync by forcing React Query to refetch the data behind the scenes
+   1. add a `onSettled` property to this `useMutation()` configuration object
+   2. this property also wants a function as a value
+   3. this function will be called whenever this `mutationFn: updateEvent` function is done no matter if it failed or succeeded
+   4. in that case, to be sure that you got the same data in your frontend as you have in your backend,
+      1. you should use `queryClient.invalidateQueries(['events'], params.id)`
+      2. to invalidate all the `events` queries that use this specific `params.id`
