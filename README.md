@@ -228,3 +228,14 @@ Currently, two official plugins are available:
    2. use these properties to show
       1. some loading text whilst the request is on its way
       2. and some error output if the deletion should fail
+
+## 13. React Query Advantages In Action
+
+1. when clicking on the `Edit` button from the `EventDetails` page and the modal is opened, prepopulate the modal with the event data to which it belongs
+2. in `EditEvent.jsx`, load the data that should be filled into this form as a default & pass it to the `inputData` prop in the `<EventForm>` component with help of `useQuery`
+3. execute `useQuery()` & configure it
+4. get back the object from `useQuery()` & pull out the needed properties from it, like `data`, `isPending`, `isEror` & `error`
+5. use `data` to prepopulate this form by setting `inputData={data}`
+6. use `isPending` to show a loading indicator (`LoadingIndicator`) if we're still waiting for a response
+7. use `isError` & `error` to show an error block (`<ErrorBlock>`) if we get an error
+8. use `data` to show the `<EventForm>`
