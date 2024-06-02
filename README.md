@@ -306,3 +306,37 @@ It would be better if we would only see some events below "Recently added events
        1. passing `queryKey` as an argument to the `queryFn` anonymous function
        2. and using the spread operator as an argument of `fetchEvents()` to spread the object `{max: 3}` from the `queryKey` property, like this `...queryKey[1]`
 3.  use this alternative approach in `FindEventSection.jsx` for the `searchTerm`
+
+## 17. React Query & React Router
+
+- As you can see in `App.jsx`, this application uses React Router, and specifically, a version of React Router that has built-in data fetching (`loader`) & data mutation (`action`) capabilities so to say
+- you can also combine those React Router features with React Query, for example at the `EventEdit` route
+
+1. in `EditEvent.jsx`, export a `loader()` function so that you can use it to tell React Router to execute the code in this function before it loads and renders this component and then allows you to fetch data before the component even appears on the screen
+   1. to do that with React query, get access to the `queryClient` because now you won't load data through the `useQuery()` hook, but instead, since you are outside of a component function, directly with help of that `queryClient.fetchQuery` method that can be used to trigger a query programmatically, so without using the `useQuery()` hook
+      1. it takes the same configuration as `useQuery()`, so `queryKey` & `queryFn`
+      2. the `queryFn` should be the same as the one you have above in the `useQuery()`
+      3. this `loader()` function receives an object which includes a `params` property which gives access to the route parameters of this active route
+   2. return this `queryClient.fetchQuery` so that the `loader` gets this promise returned by `fetchQuery()` & waits for that promise to resolve before React Router goeas ahead and renders the component
+   3. you could think that you should now remove `useQuery()` from that component because you're using React Router now, but this is actually not the case, because whilst you could use `useLoaderData()` (a hook provided by React Router), it is better to keep `useQuery()` around, because when you use `fetchQuery()` in the `loader`, React Query will go ahead and send that request and will then store that response data in the cache. Therefore, when `useQuery()` is executed again in the component, it's this cached data that will be used
+   4. the only thing you should get rid of is this `isPending` state because you don't need this `<LoadingIndicator>` now
+   5. in `App.js`, import this `loader` function & connect it to this `<EditEvent>` route
+2. when you want to use React Router, you are not limited to fetching data, instead you can also use it for editing data, for performing mutations
+   1. back in `EditEvent.jsx`, export an `action()` async function which will be triggered by React Router when a form on this page is submitted
+      1. in this function, you will get an object passed in automatically by React Router that will have a `request` & a `params` property
+      2. inside this function, you can extract the `formData`that was submitted & get the `updatedEventData` with help of `Object.fromEntries(formData)`
+      3. send this `updatedEventData` to the backend by directly calling `updateEvent()` imported from `http.js` without creating a mutation where you will pass to it an object where you set `{ id: params.id, event: updatedEventData }` & await it to only continue once this process is completed
+      4. invalidate all queries with `queryClient.invalidateQueries(['events'])` to make sure that the updated data is fetched again, but with this alternative approach you will not perform optimistic updating anymore
+      5. return a `redirect()`
+   2. tweak the component
+      1. in `handleSubmit`, make sure that you no longer call `mutate` & `navigate()`
+      2. instead, make sure that the form is submitted so that this `action()` function is triggered, as React Router requires it
+         1. submit a form programmatically by using the `useSubmit()` hook provided by React Router which gives a `submit()` function
+         2. use this `submit()` function in `handleSubmit()` instead of `mutate` & `navigate()` to submit this form
+         3. configure this `submit()` function & set to it `{method: 'PUT'}`
+         4. this `submit()` function doesn't send an HTTP request, but only trigger this client-side `action()` function
+         5. so now, you can remove the `useMutation()` code
+   3. go back to `App.jsx` & import this `action()` function & assign it to the `<EditEvent>` route
+3. in `EditEvent.jsx`, use the `useNavigation()` provided by React Router hook to get the user some feedback that the request is on its way
+4. in `Header.jsx`, use the `useIsFetching()` hook provided by React Query to show some feedback with a progress bar when fetching or sending data
+5. in `EditEvent.jsx`, avoid redundant HTTP requests when using React Router in conjunction with React Query by using the `staleTime` property in the `useQuery()` function
