@@ -3,7 +3,7 @@ import { Link, Outlet, useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
 import Header from '../Header.jsx';
-import { deleteEvent, fetchEvent, queryClient } from '../../util/http.js';
+import { deleteEvent, fetchEvent, queryClient, url } from '../../util/http.js';
 import ErrorBlock from '../UI/ErrorBlock.jsx';
 import Modal from '../UI/Modal.jsx';
 
@@ -88,7 +88,7 @@ export default function EventDetails() {
           </nav>
         </header>
         <div id="event-details-content">
-          <img src={`http://localhost:3000/${data.image}`} alt={data.title} />
+          <img src={`${url}/${data.image}`} alt={data.title} />
           <div id="event-details-info">
             <div>
               <p id="event-details-location">{data.location}</p>
